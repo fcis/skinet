@@ -1,6 +1,7 @@
 using System;
 using Core.Entities;
 using Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
@@ -15,46 +16,64 @@ public class ProductRepository:IProductRepository
 
     public void AddProduct(Product product)
     {
-        throw new NotImplementedException();
+        context.Products.Add(product);
     }
 
     public void DeleteProduct(Product product)
     {
-        throw new NotImplementedException();
+        context.Products.Remove(product);
     }
 
-    public Task<IReadOnlyList<string>> GetBrandsAsync()
+    public async Task<IReadOnlyList<string>> GetBrandsAsync()
     {
-        throw new NotImplementedException();
+        return await context.Products.Select(x => x.Brand)
+            .Distinct().ToListAsync();
     }
 
-    public Task<Product?> GetProductByIdAsync(int id)
+    public async Task<Product?> GetProductByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await context.Products.FindAsync(id);
     }
 
-    public Task<IReadOnlyList<Product>> GetProductsAsync(string? brand, string? type, string? sort)
+    public async Task<IReadOnlyList<Product>> GetProductsAsync(string? brand, string? type, string? sort)
     {
-        throw new NotImplementedException();
+        var query = context.Products.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(brand))
+            query = query.Where(x => x.Brand == brand);
+
+        if (!string.IsNullOrWhiteSpace(type))
+            query = query.Where(x => x.Type == type);
+
+
+        query = sort switch
+        {
+            "priceAsc" => query.OrderBy(x => x.Price),
+            "priceDesc" => query.OrderByDescending(x => x.Price),
+            _ => query.OrderBy(x => x.Name)
+        };
+
+        return await query.ToListAsync(); 
     }
 
-    public Task<IReadOnlyList<string>> GetTypesAsync()
+    public async Task<IReadOnlyList<string>> GetTypesAsync()
     {
-        throw new NotImplementedException();
-    }
+        return await context.Products.Select(x => x.Type)
+            .Distinct()
+            .ToListAsync();    }
 
     public bool ProductExists(int id)
     {
-        throw new NotImplementedException();
+        return context.Products.Any(x => x.Id == id);
     }
 
-    public Task<bool> SaveChangesAsync()
+    public async Task<bool> SaveChangesAsync()
     {
-        throw new NotImplementedException();
+        return await context.SaveChangesAsync() > 0;
     }
 
     public void UpdateProduct(Product product)
     {
-        throw new NotImplementedException();
+        context.Entry(product).State = EntityState.Modified;
     }
 }
