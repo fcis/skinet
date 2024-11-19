@@ -20,9 +20,10 @@ namespace API.Controllers
             this.logger = _logger;
         }
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts(){
-
-            return Ok(await repo.GetProductsAsync("","",""));
+        public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts(string? brand, 
+        string? type, string? sort)
+         {
+                return Ok(await repo.GetProductsAsync(brand, type, sort));
         }
         [HttpGet("{id:int}")] // api/Products/3
         public async Task<ActionResult<Product>> GetProduct(int id)
@@ -71,6 +72,18 @@ namespace API.Controllers
             return NoContent();
         else
             return BadRequest("Problem Updating Product");
+    }
+
+    [HttpGet("brands")]
+    public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
+    {
+        return Ok(await repo.GetBrandsAsync());
+    }
+
+    [HttpGet("types")]
+    public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
+    {
+        return Ok(await repo.GetTypesAsync());
     }
 
     }
