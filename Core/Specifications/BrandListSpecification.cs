@@ -1,7 +1,7 @@
 using System;
 using Core.Entities;
 
-namespace Core.Interfaces.Specifications;
+namespace Core.Specifications;
 
 public class BrandListSpecification : BaseSpecification<Product,string>
 {

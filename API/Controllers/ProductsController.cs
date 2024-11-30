@@ -1,6 +1,7 @@
+using API.RequestHelpers;
 using Core.Entities;
 using Core.Interfaces;
-using Core.Interfaces.Specifications;
+using Core.Specifications;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+
+    public class ProductsController : BaseApiController 
     {
         private readonly IGenericRepository<Product> repo;
         private readonly ILogger<ProductsController> logger;
@@ -21,12 +21,14 @@ namespace API.Controllers
             this.logger = _logger;
         }
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts(string? brand, 
-        string? type, string? sort)
+        public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts([FromQuery]ProductSpecParams specParams)
         {
-            var spec= new ProductSpecification(brand,type,sort);
-            var products = await repo.ListAsync(spec);
-                return Ok(products);
+            
+            var spec= new ProductSpecification(specParams);
+            // var products = await repo.ListAsync(spec);
+            // var count = await repo.CountAsync(spec);
+            // var pagination = new Pagination<Product>(specParams.PageIndex,specParams.PageSize,count,products);
+                return Ok(await CreatePagedResult(repo,spec,specParams.PageIndex,specParams.PageSize));
         }
         [HttpGet("{id:int}")] // api/Products/3
         public async Task<ActionResult<Product>> GetProduct(int id)
