@@ -1,3 +1,4 @@
+using API.Middleware;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
+    .WithOrigins("http://localhost:4200","https://localhost:4200"));
 try
 {
     using var scope = app.Services.CreateScope();
