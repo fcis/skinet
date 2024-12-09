@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "dotnet",
+			"task": "build",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "dotnet: build"
+		},
+		{
+			"type": "dotnet",
+			"task": "build c:\\Users\\MohammedGamal\\source\\repos\\skinet\\API\\API.csproj",
+			"file": "c:\\Users\\MohammedGamal\\source\\repos\\skinet\\API\\API.csproj",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "dotnet: build c:\\Users\\MohammedGamal\\source\\repos\\skinet\\API\\API.csproj"
+		}
+	]
+}

@@ -28,7 +28,7 @@ namespace API.Controllers
             // var products = await repo.ListAsync(spec);
             // var count = await repo.CountAsync(spec);
             // var pagination = new Pagination<Product>(specParams.PageIndex,specParams.PageSize,count,products);
-                return Ok(await CreatePagedResult(repo,spec,specParams.PageIndex,specParams.PageSize));
+                return await CreatePagedResult(repo,spec,specParams.PageIndex,specParams.PageSize);
         }
         [HttpGet("{id:int}")] // api/Products/3
         public async Task<ActionResult<Product>> GetProduct(int id)
