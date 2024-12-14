@@ -18,7 +18,7 @@ public class SpecificationEvaluator<T> where T : BaseEntity
     }
         if(spec.OrderByDescending != null)
     {
-        query = query.OrderBy(spec.OrderByDescending);
+        query = query.OrderByDescending(spec.OrderByDescending);
     }
     if (spec.IsDistinct)
     {
