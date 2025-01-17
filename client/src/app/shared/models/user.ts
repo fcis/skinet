@@ -2,7 +2,7 @@ export type User = {
     firstName: string;
     lastName: string;
     email: string;
-    address: Address;
+    address: Address ;
 }
 export type Address = {
     line1: string;
@@ -10,5 +10,5 @@ export type Address = {
     city: string;
     state: string;
     country: string;
-    postalCode: string;
+    postal_code: string;
 }

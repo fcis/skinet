@@ -10,11 +10,13 @@ public class StoreContext(DbContextOptions options) : IdentityDbContext<AppUser>
 {
     public required  DbSet<Product> Products { get; set; }
     public DbSet<Address> Addresses { get; set; }
+    public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductConfiguration).Assembly);
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductConfiguration).Assembly);
+
         
     }
 }

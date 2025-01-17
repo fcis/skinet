@@ -15,7 +15,7 @@ namespace API.Extensions
                 City = address.City,
                 State = address.State,
                 Country = address.Country,
-                PostalCode = address.PostalCode,
+                postal_code = address.PostalCode,
             };
         }
         public static Address ToEntity(this AddressDto addressDto)
@@ -28,7 +28,7 @@ namespace API.Extensions
                 City = addressDto.City,
                 State = addressDto.State,
                 Country = addressDto.Country,
-                PostalCode = addressDto.PostalCode,
+                PostalCode = addressDto.postal_code,
             };
         }
         public static void UpdateFromDto(this Address address, AddressDto addressDto)
@@ -40,7 +40,7 @@ namespace API.Extensions
             address.City = addressDto.City;
             address.State = addressDto.State;
             address.Country = addressDto.Country;
-            address.PostalCode = addressDto.PostalCode;
+            address.PostalCode = addressDto.postal_code;
         }
     }
 }
