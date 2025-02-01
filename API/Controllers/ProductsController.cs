@@ -12,12 +12,12 @@ namespace API.Controllers
 
     public class ProductsController : BaseApiController 
     {
-        private readonly IGenericRepository<Product> repo;
+        private readonly IUnitOfWork unit;
         private readonly ILogger<ProductsController> logger;
 
-        public ProductsController(IGenericRepository<Product> Repo,ILogger<ProductsController> _logger)
+        public ProductsController(IUnitOfWork unit,ILogger<ProductsController> _logger)
         {
-            repo = Repo;
+            this.unit = unit;
             this.logger = _logger;
         }
         [HttpGet]
@@ -28,12 +28,12 @@ namespace API.Controllers
             // var products = await repo.ListAsync(spec);
             // var count = await repo.CountAsync(spec);
             // var pagination = new Pagination<Product>(specParams.PageIndex,specParams.PageSize,count,products);
-                return await CreatePagedResult(repo,spec,specParams.PageIndex,specParams.PageSize);
+                return await CreatePagedResult(unit.Repository<Product>(),spec,specParams.PageIndex,specParams.PageSize);
         }
         [HttpGet("{id:int}")] // api/Products/3
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await repo.GetByIdAsync(id);
+            var product = await unit.Repository<Product>().GetByIdAsync(id);
             if(product == null)
                 return NotFound();
             return product;
@@ -43,8 +43,8 @@ namespace API.Controllers
         public async Task<ActionResult<Product>> CreateProduct(Product product)
         {
             try{
-                 repo.Add(product);
-               if(await repo.SaveAllAsync())
+                unit.Repository<Product>().Add(product);
+               if(await unit.Complete())
                {
                  return CreatedAtAction(nameof(GetProduct),new {id = product.Id},product);
                }
@@ -59,10 +59,10 @@ namespace API.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<Product>> UpdateProduct(int id,[FromBody] Product product)
         {
-            if (product.Id != id || !repo.Exists(id)) 
+            if (product.Id != id || !ProductExists(id)) 
             return BadRequest("Cannot update this product");
-            repo.Update(product);
-             if(await repo.SaveAllAsync())
+            unit.Repository<Product>().Update(product);
+             if(await unit.Complete())
             return NoContent();
             else
             return BadRequest("Problem Updating Product");
@@ -70,10 +70,10 @@ namespace API.Controllers
          [HttpDelete("{id:int}")]
     public async Task<ActionResult> DeleteProduct(int id)
     {
-        var product = await repo.GetByIdAsync(id);
+        var product = await unit.Repository<Product>().GetByIdAsync(id);
         if (product == null) return NotFound();
-            repo.Remove(product);
-        if(await repo.SaveAllAsync())
+            unit.Repository<Product>().Remove(product);
+        if(await unit.Complete())
             return NoContent();
         else
             return BadRequest("Problem Updating Product");
@@ -83,7 +83,7 @@ namespace API.Controllers
     public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
     {
         var spec = new BrandListSpecification();
-         var brands = await repo.ListAsync(spec);
+         var brands = await unit.Repository<Product>().ListAsync(spec);
         return Ok(brands);
     }
 
@@ -91,10 +91,14 @@ namespace API.Controllers
     public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
     {
         var spec = new TypeListSpecification();
-        var types = await repo.ListAsync(spec);
+        var types = await unit.Repository<Product>().ListAsync(spec);
 
         return Ok(types);
     }
+     private bool ProductExists(int id)
+     {
+            return unit.Repository<Product>().Exists(id);
+     }
 
     }
 }
